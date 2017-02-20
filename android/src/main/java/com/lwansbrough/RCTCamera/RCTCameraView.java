@@ -27,11 +27,9 @@ public class RCTCameraView extends ViewGroup {
     public RCTCameraView(Context context) {
         super(context);
         this._context = context;
-        new RCTCamera(getDeviceOrientation(context), context);
-//        RCTCamera.createInstance(getDeviceOrientation(context));
+        RCTCamera.createInstance(getDeviceOrientation(context));
 
-        _orientationListener = new OrientationEventListener(context, SensorManager
-                .SENSOR_DELAY_NORMAL) {
+        _orientationListener = new OrientationEventListener(context, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int orientation) {
                 if (setActualDeviceOrientation(_context)) {
@@ -42,8 +40,7 @@ public class RCTCameraView extends ViewGroup {
 
         if (_orientationListener.canDetectOrientation()) {
             _orientationListener.enable();
-        }
-        else {
+        } else {
             _orientationListener.disable();
         }
     }
@@ -71,8 +68,7 @@ public class RCTCameraView extends ViewGroup {
         if (null != this._viewFinder) {
             this._viewFinder.setCameraType(type);
             RCTCamera.getInstance().adjustPreviewLayout(type);
-        }
-        else {
+        } else {
             _viewFinder = new RCTCameraViewFinder(_context, type);
             if (-1 != this._flashMode) {
                 _viewFinder.setFlashMode(this._flashMode);
@@ -133,15 +129,13 @@ public class RCTCameraView extends ViewGroup {
             _actualDeviceOrientation = actualDeviceOrientation;
             RCTCamera.getInstance().setActualDeviceOrientation(_actualDeviceOrientation);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     private int getDeviceOrientation(Context context) {
-        return ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getOrientation();
+        return ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
     }
 
     private void layoutViewFinder() {
@@ -163,8 +157,7 @@ public class RCTCameraView extends ViewGroup {
                 if (ratio * height > width) {
                     viewfinderHeight = (int) (width / ratio);
                     viewfinderWidth = (int) width;
-                }
-                else {
+                } else {
                     viewfinderWidth = (int) (ratio * height);
                     viewfinderHeight = (int) height;
                 }
@@ -174,8 +167,7 @@ public class RCTCameraView extends ViewGroup {
                 if (ratio * height < width) {
                     viewfinderHeight = (int) (width / ratio);
                     viewfinderWidth = (int) width;
-                }
-                else {
+                } else {
                     viewfinderWidth = (int) (ratio * height);
                     viewfinderHeight = (int) height;
                 }
@@ -188,8 +180,7 @@ public class RCTCameraView extends ViewGroup {
         int viewFinderPaddingX = (int) ((width - viewfinderWidth) / 2);
         int viewFinderPaddingY = (int) ((height - viewfinderHeight) / 2);
 
-        this._viewFinder.layout(viewFinderPaddingX, viewFinderPaddingY, viewFinderPaddingX +
-                viewfinderWidth, viewFinderPaddingY + viewfinderHeight);
+        this._viewFinder.layout(viewFinderPaddingX, viewFinderPaddingY, viewFinderPaddingX + viewfinderWidth, viewFinderPaddingY + viewfinderHeight);
         this.postInvalidate(this.getLeft(), this.getTop(), this.getRight(), this.getBottom());
     }
 }

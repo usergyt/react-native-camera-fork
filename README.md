@@ -1,16 +1,13 @@
-# Looking for contributors
-Hey there, I'm looking for active contributors to help move the development of this branch forward in a stable and timely fashion. I haven't had a need for this module in quite some time and so my person time is not being allocated to it. If you are interested in contributing more actively, please contact me (same username on Twitter, Facebook, etc.) Thanks!
-
 # react-native-camera [![npm version](https://badge.fury.io/js/react-native-camera.svg)](http://badge.fury.io/js/react-native-camera) [![Gitter](https://badges.gitter.im/lwansbrough/react-native-camera.svg)](https://gitter.im/lwansbrough/react-native-camera)
 
 A camera module for React Native.
 
-#### Breaking Changes
-react-native header imports have changed in v0.40, and that means breaking changes for all! [Reference PR & Discussion](https://github.com/lwansbrough/react-native-camera/pull/544).
-- if on react-native < 0.40: `npm i react-native-camera@0.4`
-- if on react-native >= 0.40 `npm i react-native-camera@0.6`
+**BREAKING CHANGES:**
+[*April 27*] capture now returns an object instead of a string
 
-![5j2jduk](https://cloud.githubusercontent.com/assets/2302315/22190752/6bc6ccd0-e0da-11e6-8e2f-6f22a3567a57.gif)
+**NOTE** These docs are for the work in progress v1 release. If you want to use the latest and greatest and can deal with *significant* instability you can install with `npm install --save lwansbrough/react-native-camera`. If you are using older version of this module please refer to the [old readme](https://github.com/lwansbrough/react-native-camera/tree/8cc61edef2c018b81e1c52f13c7d261fe6a35a63).
+
+![](https://i.imgur.com/5j2JdUk.gif)
 
 ## Getting started
 
@@ -20,14 +17,8 @@ react-native header imports have changed in v0.40, and that means breaking chang
 ```
 <key>NSCameraUsageDescription</key>
 <string>Your message to user when the camera is accessed for the first time</string>
-
-<!-- Include this only if you are planning to use the camera roll -->
 <key>NSPhotoLibraryUsageDescription</key>
-<string>Your message to user when the photo library is accessed for the first time</string>
-
-<!-- Include this only if you are planning to use the microphone for video recording -->
-<key>NSMicrophoneUsageDescription</key>
-<string>Your message to user when the microsphone is accessed for the first time</string>
+<string>Your message to user when the photo library is access for the first time</string>
 ```
 
 ### Mostly automatic install with react-native
@@ -70,12 +61,7 @@ pod 'react-native-camera', path: '../node_modules/react-native-camera'
 	```
     compile project(':react-native-camera')
 	```
-5. Declare the permissions in your Android Manifest
 
-  ```
-  <uses-permission android:name="android.permission.CAMERA" />
-  <uses-feature android:name="android.hardware.camera" />
-  ```
 
 ## Usage
 
@@ -177,8 +163,6 @@ This property allows you to specify the quality output of the captured image or 
 
 When choosing more-specific quality settings (1080p, 720p, 480p), note that each platform and device supports different valid picture/video sizes, and actual resolution within each of these quality settings might differ. There should not be too much variance (if any) for iOS; 1080p should give 1920x1080, 720p should give 1280x720, and 480p should give 640x480 (note that iOS 480p therefore is NOT the typical 16:9 HD aspect ratio, and the typically-HD camera preview screen may differ greatly in aspect from what you actually record!!). For Android, expect more variance: on most Androids, 1080p *should* give 1920x1080 and 720p *should* give 1280x720; however, 480p will at "best" be 853x480 (16:9 HD aspect ratio), but falls back/down to 800x480, 720x480, or "worse", depending on what is closest-but-less-than 853x480 and available on the actual device. If your application requires knowledge of the precise resolution of the output image/video, you might consider manually determine the actual resolution itself after capture has completed (particularly for 480p on Android).
 
-Android also supports `Camera.constants.CaptureQuality.preview` or `"preview"` which matches the output image to the same one used in the preview
-
 #### `type`
 
 Values: `Camera.constants.Type.front` or `"front"`, `Camera.constants.Type.back` or `"back"` (default)
@@ -200,7 +184,7 @@ Values: `true` (default) or `false`
 
 This property allows you to specify whether a shutter sound is played on capture. It is currently android only, pending [a reasonable mute implementation](http://stackoverflow.com/questions/4401232/avfoundation-how-to-turn-off-the-shutter-sound-when-capturestillimageasynchrono) in iOS.
 
-#### `onBarCodeRead`
+#### `iOS` `onBarCodeRead`
 
 Will call the specified method when a barcode is detected in the camera's view.
 
@@ -209,7 +193,7 @@ Event contains `data` (the data in the barcode) and `bounds` (the rectangle whic
 The following barcode types can be recognised:
 
 - `aztec`
-- `code128`
+- `code138`
 - `code39`
 - `code39mod43`
 - `code93`
@@ -224,7 +208,7 @@ The following barcode types can be recognised:
 
 The barcode type is provided in the `data` object.
 
-#### `barCodeTypes`
+#### `iOS` `barCodeTypes`
 
 An array of barcode types to search for. Defaults to all types listed above. No effect if `onBarCodeRead` is undefined.
 
@@ -314,15 +298,7 @@ Ends the current capture session for video captures. Only applies when the curre
 
 #### `iOS` `Camera.checkDeviceAuthorizationStatus(): Promise`
 
-Exposes the native API for checking if the device has authorized access to the camera (camera and microphone permissions). Can be used to call before loading the Camera component to ensure proper UX. The promise will be fulfilled with `true` or `false` depending on whether the device is authorized. Note, [as of iOS 10](https://developer.apple.com/library/content/documentation/AudioVideo/Conceptual/PhotoCaptureGuide/#//apple_ref/doc/uid/TP40017511-CH1-DontLinkElementID_3), you will need to add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` to your XCode project's Info.plist file or you might experience a crash.
-
-#### `iOS` `Camera.checkVideoAuthorizationStatus(): Promise`
-
-The same as `Camera.checkDeviceAuthorizationStatus()` but only checks the camera permission. Note, as of iOS 10, you will need to add `NSCameraUsageDescription` to your XCode project's Info.plist file or you might experience a crash.
-
-#### `iOS` `Camera.checkAudioAuthorizationStatus(): Promise`
-
-The same as `Camera.checkDeviceAuthorizationStatus()` but only checks the microphone permission. Note, as of iOS 10, you will need to add `NSMicrophoneUsageDescription` to your XCode project's Info.plist file or you might experience a crash.
+Exposes the native API for checking if the device has authorized access to the camera. Can be used to call before loading the Camera component to ensure proper UX. The promise will be fulfilled with `true` or `false` depending on whether the device is authorized.
 
 ## Subviews
 This component supports subviews, so if you wish to use the camera view as a background or if you want to layout buttons/images/etc. inside the camera then you can do that.
