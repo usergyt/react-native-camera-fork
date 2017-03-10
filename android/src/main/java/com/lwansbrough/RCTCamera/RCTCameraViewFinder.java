@@ -7,18 +7,13 @@ package com.lwansbrough.RCTCamera;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.view.TextureView;
 import android.os.AsyncTask;
+import android.view.TextureView;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-
-import java.util.List;
-import java.util.EnumMap;
-import java.util.EnumSet;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
@@ -26,6 +21,10 @@ import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
 
 class RCTCameraViewFinder extends TextureView implements TextureView.SurfaceTextureListener, Camera.PreviewCallback {
     private int _cameraType;
@@ -156,7 +155,8 @@ class RCTCameraViewFinder extends TextureView implements TextureView.SurfaceText
             } catch (Exception e) {
                 e.printStackTrace();
                 stopCamera();
-            } finally {
+            }
+            finally {
                 _isStarting = false;
             }
         }

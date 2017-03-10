@@ -390,35 +390,38 @@ public class RCTCamera {
         cameraInfo.rotation = rotation;
         // TODO: take in account the _orientation prop
 
-        setAdjustedDeviceOrientation(rotation);
-        camera.setDisplayOrientation(displayRotation);
 
-        Camera.Parameters parameters = camera.getParameters();
-        parameters.setRotation(cameraInfo.rotation);
-
-        // set preview size
-        // defaults to highest resolution available
-        Camera.Size optimalPreviewSize = getBestSize(parameters.getSupportedPreviewSizes(),
-                Integer.MAX_VALUE, Integer.MAX_VALUE);
-        int width = optimalPreviewSize.width;
-        int height = optimalPreviewSize.height;
-
-        parameters.setPreviewSize(width, height);
         try {
+            setAdjustedDeviceOrientation(rotation);
+            camera.setDisplayOrientation(displayRotation);
+
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setRotation(cameraInfo.rotation);
+
+            // set preview size
+            // defaults to highest resolution available
+            Camera.Size optimalPreviewSize = getBestSize(parameters.getSupportedPreviewSizes(),
+                    Integer.MAX_VALUE, Integer.MAX_VALUE);
+            int width = optimalPreviewSize.width;
+            int height = optimalPreviewSize.height;
+
+            parameters.setPreviewSize(width, height);
             camera.setParameters(parameters);
+            if (cameraInfo.rotation == 0 || cameraInfo.rotation == 180) {
+                cameraInfo.previewWidth = width;
+                cameraInfo.previewHeight = height;
+            }
+            else {
+                cameraInfo.previewWidth = height;
+                cameraInfo.previewHeight = width;
+            }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             e.printStackTrace();
+            Toast.makeText(mContext,"请确认是否打开相机权限",Toast.LENGTH_LONG).show();
         }
 
-        if (cameraInfo.rotation == 0 || cameraInfo.rotation == 180) {
-            cameraInfo.previewWidth = width;
-            cameraInfo.previewHeight = height;
-        }
-        else {
-            cameraInfo.previewWidth = height;
-            cameraInfo.previewHeight = width;
-        }
+
     }
     public RCTCamera(int deviceOrientation,Context context) {
         mContext=context;
